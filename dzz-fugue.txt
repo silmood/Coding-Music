@@ -1,0 +1,333 @@
+base_time = 0.7
+play_solo_1 = true
+play_stairs_1 = true
+play_stairs_2 = true
+play_stairs_3 = true
+play_stairs_4 = true
+play_stairs_5 = true
+
+define :base do
+  use_synth :beep
+  play chord(:D5, :major), sustain: base_time * 2, amp: 0.5
+  play_pattern_timed [:Cs6, :D6, :E6, :A5], base_time / 2, amp: 0.5
+  sleep base_time
+  play :Fs6, sustain: base_time / 2, amp: 0.5
+  sleep base_time
+  play chord(:D5, :minor), sustain: base_time * 2, amp: 0.5
+  play_pattern_timed [:Cs6, :D6, :E6, :A5], base_time / 2, amp: 0.5
+  sleep base_time
+  play :D6, sustain: base_time/2, amp: 0.5
+  sleep base_time
+  play chord(:Db5, :minor), sustain: base_time * 2, amp: 0.5
+  play_pattern_timed [:Cs6, :B5, :Db6, :A5], base_time / 2, amp: 0.5
+  sleep base_time
+  play :Cs6, sustain: base_time/2, amp: 0.5
+  sleep base_time
+  play chord(:B4, :minor), sustain: base_time * 2, amp: 0.5
+  play_pattern_timed [:Cs6, :B5, :Cs6, :A5], base_time / 2, amp: 0.5
+  sleep base_time / 2
+  play :Gs5, amp: 0.5
+  sleep base_time / 2
+  cue :play_solo_1
+  play_pattern_timed [:A5, :B5], base_time / 2, amp: 0.5
+end
+
+define :solo_1 do
+  use_synth :sine
+  play_pattern_timed [:Gs6, :A6, :B6], base_time/2, amp: 0.5
+  sleep base_time
+  play :A6, amp: 0.5
+  sleep (base_time / 2) * 3
+  s = play :B6, amp: 0.5
+  sleep 0.02
+  control s, note: :C7
+  sleep 0.02
+  control s, note: :Cs7
+  sleep base_time
+  play :B6, amp: 0.5
+  sleep (base_time / 2) * 3
+  play :Cs7, amp: 0.5
+  sleep (base_time / 2) * 3
+  play_pattern_timed [:Gs6, :A6, :B6], base_time/2, amp: 0.5
+  sleep base_time
+  play :A6, amp: 0.5
+  sleep (base_time / 2) * 3
+  play :Gs6, amp: 0.5
+  sleep base_time
+  s = play :Cs7, amp: 0.5
+  sleep 0.02
+  control s, note: :D7
+  sleep (base_time / 2) * 3
+  play :Cs7, amp: 0.5
+  sleep (base_time / 2) * 3
+  play :B6, amp: 0.5
+end
+
+define :bridge_1 do
+  use_synth :mod_fm
+  play chord(:D4, :major), amp: 4, attack: 0.1, sustain: base_time, release: base_time * 1.5, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 2.5
+  play chord(:D4, :major), amp: 4, attack: 0.2, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 1.5
+  play chord(:D4, :minor), amp: 4, attack: 0.1, sustain: base_time * 1.6, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 2.4
+  play chord(:D4, :major), amp: 4, attack: 0.1, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 1.6
+  play chord(:Cs4, :minor),  amp: 4, attack: 0.1, sustain: base_time * 1.6, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 2.5
+  play chord(:Cs4, :minor), amp: 4, attack: 0.1, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 0.75
+  play chord(:C4, :minor), amp: 4, attack: 0.1, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 0.75
+  play chord(:B3, :minor), amp: 4, attack: 0.1, sustain: base_time * 1.6, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 2.5
+  play chord(:B3, :minor), amp: 4, attack: 0.1, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+  sleep base_time * 1.5
+end
+
+define :clap do
+  with_fx :reverb do
+    sample :perc_snap, rate: 2
+    sleep base_time / 2
+  end
+end
+
+in_thread do
+  sync :percussion
+  loop do
+    play_clap
+    sleep base_time * 2
+  end
+end
+
+in_thread do
+  use_synth :tri
+  loop do
+    sync :stairs_1
+    while(play_stairs_1)
+      with_fx :wobble do
+        play_pattern_timed chord(:D5, :major), 0.055, amp: 0.3, release: 0.2
+      end
+    end
+  end
+end
+
+in_thread do
+  use_synth :tri
+  loop do
+    sync :stairs_2
+    while(play_stairs_2)
+      with_fx :wobble do
+        play_pattern_timed chord(:D5, :minor), 0.055, amp: 0.3, release: 0.2
+      end
+    end
+  end
+end
+
+in_thread do
+  use_synth :tri
+  loop do
+    sync :stairs_3
+    while(play_stairs_3)
+      with_fx :wobble do
+        play_pattern_timed chord(:Cs5, :minor), 0.055, amp: 0.3, release: 0.2
+      end
+    end
+  end
+end
+
+in_thread do
+  use_synth :tri
+  loop do
+    sync :stairs_4
+    while(play_stairs_4)
+      with_fx :wobble do
+        play_pattern_timed chord(:C5, :minor), 0.055, amp: 0.3, release: 0.2
+      end
+    end
+  end
+end
+
+in_thread do
+  use_synth :tri
+  loop do
+    sync :stairs_5
+    while(play_stairs_5)
+      with_fx :wobble do
+        play_pattern_timed chord(:B4, :minor), 0.055, amp: 0.3, release: 0.2
+      end
+    end
+  end
+end
+
+#Song flow
+
+in_thread do
+  2.times do
+    base
+    play_solo_1 = false
+  end
+  cue :base_always
+  cue :bridge_1
+  cue :clap
+end
+
+in_thread do
+  loop do
+    sync :play_solo_1
+    if(play_solo_1)
+      solo_1
+    end
+  end
+end
+
+in_thread do
+  loop do
+    sync :base_always
+    2.times do
+      base
+    end
+  end
+end
+
+in_thread do
+  loop do
+    sync :bridge_1
+    2.times do
+      with_fx :reverb do
+        bridge_1
+      end
+    end
+  end
+end
+
+in_thread do
+  sync :clap
+  68.times do
+    clap
+  end
+  cue :main
+end
+
+in_thread do
+  sync :main
+  2.times do
+    play_stairs_1 = true
+    cue :stairs_1
+    play_bass 1.3
+    play chord(:D4, :major), amp: 1.2, attack: 0.1, sustain: base_time, release: base_time * 1.5, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time
+    cue :percussion
+    sleep base_time * 1.5
+    play_bass 1.3
+    play chord(:D4, :major), amp: 1.2, attack: 0.2, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time * 1.36
+    play_stairs_1 = false
+    sleep base_time * 0.14
+    play_bass 1.3
+    play_stairs_2 = true
+    cue :stairs_2
+    play chord(:D4, :minor), amp: 1.2, attack: 0.1, sustain: base_time * 1.6, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time * 2.26
+    play_stairs_2 = false
+    sleep base_time * 0.14
+    play_stairs_1 = true
+    cue :stairs_1
+    play_bass 1.3
+    play chord(:D4, :major), amp: 1.2, attack: 0.1, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time * 1.6
+    play_stairs_1 = false
+    play_stairs_3 = true
+    cue :stairs_3
+    play_bass 1.2
+    play chord(:Cs4, :minor),  amp: 1.2, attack: 0.1, sustain: base_time * 1.6, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time * 2.5
+    play_bass 1.2
+    play chord(:Cs4, :minor), amp: 1.2, attack: 0.1, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time * 0.75
+    play_stairs_3 = false
+    play_stairs_4 = true
+    cue :stairs_4
+    play_bass 1.1
+    play chord(:C4, :minor), amp: 1.2, attack: 0.1, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time * 0.75
+    play_stairs_4 = false
+    play_stairs_5 = true
+    cue :stairs_5
+    play_bass 1
+    play chord(:B3, :minor), amp: 1.2, attack: 0.1, sustain: base_time * 1.6, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time * 2.5
+    play_bass 1
+    play chord(:B3, :minor), amp: 1.2, attack: 0.1, depth: 0.1 , mod_phase: 0.17, mod_range: -7, mod_pulse_width: 0.3
+    sleep base_time * 1.5
+    play_stairs_5 = false
+  end
+
+  2.times do
+    cue :base_always
+    cue :bridge_1
+    play_bass 1.3
+    sleep base_time * 2.5
+    play_bass 1.3
+    sleep base_time * 1.5
+    play_bass 1.3
+    sleep base_time * 2.4
+    play_bass 1.3
+    sleep base_time * 1.6
+    play_bass 1.2
+    sleep base_time * 2.5
+    play_bass 1.2
+    sleep base_time * 0.75
+    play_bass 1.1
+    sleep base_time * 0.75
+    play_bass 1
+    sleep base_time * 2.5
+    play_bass 1
+    sleep base_time * 1.5
+  end
+
+  2.times do
+    play_solo_1 = true
+    cue :base_always
+    cue :bridge_1
+    play_bass 1.3
+    sleep base_time * 2.5
+    play_bass 1.3
+    sleep base_time * 1.5
+    play_bass 1.3
+    sleep base_time * 2.4
+    play_bass 1.3
+    sleep base_time * 1.6
+    play_bass 1.2
+    sleep base_time * 2.5
+    play_bass 1.2
+    sleep base_time * 0.75
+    play_bass 1.1
+    sleep base_time * 0.75
+    play_bass 1
+    sleep base_time * 2.5
+    play_bass 1
+    sleep base_time * 1.5
+  end
+
+  play_bass 1.3
+  sleep base_time * 2.5
+  play_bass 1.3
+  sleep base_time * 1.5
+  play_bass 1.3
+  sleep base_time * 2.4
+  play_bass 1.3
+  sleep base_time * 1.6
+  play_bass 1.2
+  sleep base_time * 2.5
+  play_bass 1.2
+  sleep base_time * 0.75
+  play_bass 1.1
+  sleep base_time * 0.75
+  play_bass 1
+  sleep base_time * 2.5
+  play_bass 1
+  sleep base_time * 1.5
+
+
+end
